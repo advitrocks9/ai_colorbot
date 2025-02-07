@@ -1,0 +1,48 @@
+# Build output
+build/
+out/
+bin/
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.dll
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.aps
+*.ncb
+*.opendb
+*.sdf
+*.opensdf
+ipch/
+*.cache
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+_deps/
+
+# Models (large binary files — place manually)
+models/*.engine
+models/*.onnx
+models/*.pt
+
+# Config (user-specific, generated at runtime)
+config.ini
+
+# Python cache (training scripts)
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store
+
+# Misc
+*.log
+*.bak
