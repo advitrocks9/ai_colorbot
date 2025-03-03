@@ -1,0 +1,45 @@
+---
+BasedOnStyle: Google
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 100
+AccessModifierOffset: -4
+
+# Braces
+BreakBeforeBraces: Attach
+
+# Alignment
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveDeclarations: Consecutive
+AlignTrailingComments: true
+
+# Includes
+SortIncludes: CaseInsensitive
+IncludeBlocks: Regroup
+IncludeCategories:
+  # Windows / platform headers first
+  - Regex:    '^<(Windows|winsock|tchar).*>'
+    Priority: 1
+  # Standard library
+  - Regex:    '^<[a-z_]+>$'
+    Priority: 2
+  # Third-party
+  - Regex:    '^<(opencv|cuda|NvInfer|imgui).*>'
+    Priority: 3
+  # Project headers
+  - Regex:    '^"'
+    Priority: 4
+
+# Spaces
+SpaceBeforeParens: ControlStatements
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+# Pointers
+PointerAlignment: Left
+
+# Line breaks
+MaxEmptyLinesToKeep: 1
+KeepEmptyLinesAtTheStartOfBlocks: false
+...
