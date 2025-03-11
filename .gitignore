@@ -32,8 +32,8 @@ models/*.engine
 models/*.onnx
 models/*.pt
 
-# Config (user-specific, generated at runtime)
-config.ini
+# Config (runtime copy next to exe — template is in config/)
+/config.ini
 
 # Python cache (training scripts)
 __pycache__/
