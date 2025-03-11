@@ -1,7 +1,5 @@
-// Overlay implementation — Win32 layered window, OpenGL context setup,
-// ImGui integration, and live config change propagation to pipeline threads.
+// Win32 layered window + OpenGL + ImGui overlay with live config propagation.
 #define WIN32_LEAN_AND_MEAN
-#pragma comment(lib, "opengl32.lib")
 #include <Windows.h>
 #include <tchar.h>
 #include <thread>
@@ -33,7 +31,6 @@ extern MouseThread*      globalMouseThread;
 
 static LRESULT WINAPI wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-// Create a layered, popup Win32 window with an OpenGL rendering context.
 static bool createOverlayWindow()
 {
     DWORD exStyle = WS_EX_LAYERED | WS_EX_TOPMOST;
@@ -50,7 +47,6 @@ static bool createOverlayWindow()
         NULL, NULL, wc.hInstance, NULL);
     if (!g_hwnd) return false;
 
-    // Black pixels become transparent via color key
     SetLayeredWindowAttributes(g_hwnd, RGB(0, 0, 0), 0, LWA_COLORKEY);
 
     g_hDC = GetDC(g_hwnd);
@@ -94,7 +90,6 @@ void overlayThread()
     if (!createOverlayWindow()) return;
     setupImGui();
 
-    // Snapshot previous config values to detect live changes
     int   prev_detection_resolution  = config.detection_resolution;
     int   prev_capture_fps           = config.capture_fps;
     bool  prev_capture_use_cuda      = config.capture_use_cuda;
@@ -182,7 +177,6 @@ void overlayThread()
                 }
                 if (prev_capture_use_cuda != config.capture_use_cuda) {
                     prev_capture_use_cuda = config.capture_use_cuda;
-                    capture_cuda_changed.store(true);
                     globalCaptureThread->updateConfig(config.detection_resolution,
                         config.capture_use_cuda, config.capture_fps, config.monitor_idx);
                     config.saveConfig();
@@ -275,6 +269,7 @@ void overlayThread()
                     prev_show_fps    = config.show_fps;
                     prev_window_size = config.window_size;
                     prev_verbose     = config.verbose;
+                    show_window_changed.store(true);
                     config.saveConfig();
                 }
 

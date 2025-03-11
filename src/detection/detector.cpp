@@ -1,6 +1,5 @@
-// Detector implementation — TensorRT lifecycle, preprocessing, and postprocessing.
-// The inference loop runs on its own thread and accepts frames produced by the
-// capture thread via a single-slot condition variable handoff.
+// TensorRT lifecycle, preprocessing, and postprocessing.
+// Inference runs on its own thread, accepting frames via condition variable handoff.
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
@@ -10,7 +9,6 @@
 #include <string>
 
 #include <opencv2/opencv.hpp>
-#include <opencv2/dnn.hpp>
 #include <opencv2/cudawarping.hpp>
 #include <opencv2/cudaimgproc.hpp>
 #include <opencv2/cudaarithm.hpp>
@@ -30,7 +28,6 @@
 #include "util/otherTools.h"
 #include "detection/postProcess.h"
 
-extern std::atomic<bool> detectionPaused;
 extern std::atomic<bool> detector_model_changed;
 extern std::atomic<bool> detection_resolution_changed;
 
@@ -82,7 +79,6 @@ void Detector::destroyCudaGraph()
     }
 }
 
-// Records one inference execution into a CUDA graph for subsequent low-overhead replay.
 void Detector::captureCudaGraph()
 {
     if (!useCudaGraph || cudaGraphCaptured) return;
@@ -360,14 +356,6 @@ void Detector::loadEngine(const std::string& modelFile)
 
 void Detector::processFrame(const cv::cuda::GpuMat& frame)
 {
-    if (detectionPaused)
-    {
-        std::lock_guard<std::mutex> lock(detectionMutex);
-        detectedBoxes.clear();
-        detectedClasses.clear();
-        return;
-    }
-
     std::unique_lock<std::mutex> lock(inferenceMutex);
     currentFrame = frame;
     frameReady   = true;
@@ -496,8 +484,7 @@ bool Detector::getLatestDetections(std::vector<cv::Rect>& boxes, std::vector<int
     return false;
 }
 
-// Resizes the input frame to 640×640, normalises to [0,1], splits channels,
-// and writes the result into the TensorRT input binding in NCHW layout.
+// Resize to 640x640, normalise to [0,1], write NCHW into TRT input binding.
 void Detector::preProcess(const cv::cuda::GpuMat& frame)
 {
     if (frame.empty()) return;
@@ -536,8 +523,6 @@ void Detector::preProcess(const cv::cuda::GpuMat& frame)
     }
 }
 
-// Runs the appropriate YOLO postprocessor, applies per-class detect/color filters,
-// and publishes results to detectedBoxes/detectedClasses.
 void Detector::postProcess(const float* output, const std::string& outputName)
 {
     if (numClasses <= 0) return;
@@ -587,7 +572,7 @@ void Detector::postProcess(const float* output, const std::string& outputName)
                 currentFrameBGR.cols, currentFrameBGR.rows);
             if (box.area() == 0) continue;
 
-            // Head boxes nested inside a player box pass without color filtering
+            // Head boxes nested inside a body box skip color filtering
             if (classId == config.class_head)
             {
                 bool nestedInside = false;
@@ -607,7 +592,6 @@ void Detector::postProcess(const float* output, const std::string& outputName)
                 }
             }
 
-            // Skip color filter for classes with color[classId] == false
             if (!config.color[classId])
             {
                 detectedBoxes.push_back(box);
@@ -615,7 +599,6 @@ void Detector::postProcess(const float* output, const std::string& outputName)
                 continue;
             }
 
-            // HSV color filter: reject boxes without a sufficiently large color blob
             cv::Mat roiBGR = currentFrameBGR(box);
             cv::Mat hsv, mask;
             cv::cvtColor(roiBGR, hsv, cv::COLOR_BGR2HSV);

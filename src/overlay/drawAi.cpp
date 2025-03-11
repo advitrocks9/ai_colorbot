@@ -8,7 +8,6 @@
 
 void drawAi()
 {
-    // ── Model Selection ─────────────────────────────────────────────
     ImGui::TextUnformatted("AI Model");
     auto availableModels = getAvailableModels();
     if (availableModels.empty())
@@ -36,7 +35,6 @@ void drawAi()
 
     ImGui::Separator();
 
-    // ── Post-Processing ─────────────────────────────────────────────
     ImGui::TextUnformatted("Postprocess Engine");
     static const char* ppOptions[] = { "yolo8", "yolo9", "yolo10", "yolo11", "yolo12" };
     int ppIndex = 0;
@@ -61,7 +59,6 @@ void drawAi()
 
     ImGui::Separator();
 
-    // ── Detection Thresholds ────────────────────────────────────────
     ImGui::TextUnformatted("Detection Settings");
     ImGui::SliderFloat("Confidence Threshold", &config.confidence_threshold, 0.01f, 1.00f, "%.2f");
     ImGui::SliderFloat("NMS Threshold",         &config.nms_threshold,        0.01f, 1.00f, "%.2f");
@@ -69,11 +66,10 @@ void drawAi()
 
     ImGui::Separator();
 
-    // ── Per-Class Table ─────────────────────────────────────────────
     ImGui::TextUnformatted("Per-Class Detection & Color Filters");
     static const char* classNames[] = {
         "Player","Bot","Weapon","Outline","Dead Body",
-        "Hideout Target (Human)","Hideout Target (Balls)",
+        "Target A","Target B",
         "Head","Smoke","Fire","Third Person"
     };
     constexpr int NUM_CLASSES = IM_ARRAYSIZE(classNames);
@@ -117,7 +113,6 @@ void drawAi()
 
     ImGui::Separator();
 
-    // ── CUDA Performance ────────────────────────────────────────────
     ImGui::TextUnformatted("CUDA Options");
     ImGui::Checkbox("Use CUDA Graph",    &config.use_cuda_graph);
     ImGui::Checkbox("Use Pinned Memory", &config.use_pinned_memory);

@@ -1,5 +1,4 @@
-// Target selection — picks the detection box closest to the screen centre,
-// applies head/body Y offsets from config, and computes the aim pivot point.
+// Target selection: pick the detection closest to screen centre, apply Y offsets.
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
@@ -32,7 +31,6 @@ AimbotTarget* sortTargets(
     int    nearestIdx  = -1;
     int    targetY     = 0;
 
-    // Priority 1: head boxes (closest to centre)
     if (!disableHeadshot)
     {
         for (size_t i = 0; i < boxes.size(); ++i)
@@ -49,7 +47,7 @@ AimbotTarget* sortTargets(
         }
     }
 
-    // Priority 2: body targets (player, bot, hideout targets)
+    // Fall back to body-class targets
     if (disableHeadshot || nearestIdx == -1)
     {
         minDistance = std::numeric_limits<double>::max();

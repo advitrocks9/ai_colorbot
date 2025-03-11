@@ -1,4 +1,4 @@
-// AimbotTarget — represents a selected detection target with a computed aim pivot.
+// Represents a selected detection target with a computed aim pivot.
 #ifndef TARGET_H
 #define TARGET_H
 

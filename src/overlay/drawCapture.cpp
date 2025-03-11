@@ -9,7 +9,6 @@
 
 void drawCapture()
 {
-    // ── Capture Settings ────────────────────────────────────────────
     ImGui::TextUnformatted("Capture Settings");
     ImGui::SliderInt("Detection Resolution", &config.detection_resolution, 50, 1280);
     if (config.detection_resolution >= 400)
@@ -50,7 +49,6 @@ void drawCapture()
 
     ImGui::Separator();
 
-    // ── Debug Window ────────────────────────────────────────────────
     ImGui::TextUnformatted("Debug Window");
     ImGui::Checkbox  ("Show Window",            &config.show_window);
     ImGui::Checkbox  ("Show FPS",               &config.show_fps);

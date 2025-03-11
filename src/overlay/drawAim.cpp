@@ -9,7 +9,6 @@ void drawAim()
     static double kiMin = 0.00, kiMax = 0.05;
     static double kdMin = 0.00, kdMax = 0.02;
 
-    // ── Mouse Settings ─────────────────────────────────────────────
     ImGui::TextUnformatted("Mouse Settings");
     ImGui::SliderInt  ("DPI",         &config.dpi,         400,   1600);
     ImGui::SliderFloat("Sensitivity", &config.sensitivity, 0.10f, 1.0f, "%.2f");
@@ -23,7 +22,6 @@ void drawAim()
     ImGui::SliderScalar("Ki", ImGuiDataType_Double, &config.pid_ki, &kiMin, &kiMax, "%.3f");
     ImGui::SliderScalar("Kd", ImGuiDataType_Double, &config.pid_kd, &kdMin, &kdMax, "%.4f");
 
-    // ── Targeting ─────────────────────────────────────────────────
     ImGui::Separator();
     ImGui::TextUnformatted("Targeting");
     ImGui::Checkbox   ("Disable Headshots", &config.disable_headshot);

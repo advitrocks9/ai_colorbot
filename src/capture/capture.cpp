@@ -1,6 +1,5 @@
-// Capture module — main capture loop and CaptureThread implementation.
-// Drives DXGI Desktop Duplication at the configured FPS, applies circle masking
-// if enabled, and feeds frames directly into the detector pipeline.
+// Capture loop: DXGI Desktop Duplication at configured FPS, optional circle
+// masking, feeding frames into the detector pipeline.
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 
@@ -28,6 +27,7 @@
 cv::cuda::GpuMat latestFrameGpu;
 cv::Mat          latestFrameCpu;
 std::mutex       frameMutex;
+std::condition_variable frameCV;
 
 int screenWidth  = 0;
 int screenHeight = 0;
@@ -118,7 +118,6 @@ void captureThread(int captureWidth, int captureHeight)
 
                 if (config.circle_mask)
                 {
-                    // Lazily build the circle mask on first use or on resolution change
                     if (circleMaskGpu.empty() || circleMaskGpu.size() != screenshotGpu.size())
                     {
                         cv::Mat maskHost(screenshotGpu.size(), CV_8UC1, cv::Scalar::all(0));

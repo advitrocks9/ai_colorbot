@@ -1,6 +1,5 @@
-// MakcuConnection — serial link to the Makcu ESP32 HID emulator.
-// Handles baudrate negotiation (115200 → 4 Mb/s), command framing,
-// and asynchronous button state reporting via a background listener thread.
+// Serial link to Makcu ESP32 HID emulator.
+// Handles baudrate negotiation (115200 to 4 Mb/s) and async button reporting.
 #ifndef MAKCU_CONNECTION_H
 #define MAKCU_CONNECTION_H
 

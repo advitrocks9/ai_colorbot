@@ -1,4 +1,4 @@
-// Forward declarations for all ImGui tab draw functions.
+// ImGui tab draw functions.
 #ifndef DRAW_SETTINGS_H
 #define DRAW_SETTINGS_H
 

@@ -1,7 +1,4 @@
-// MouseThread — PID-controlled mouse movement via Makcu serial device.
-// Accepts target pivot points, computes pixel deltas via a discrete PID controller,
-// scales by DPI/sensitivity, and queues the resulting moves to a worker thread
-// that forwards them to the Makcu driver over serial.
+// PID-controlled mouse movement via Makcu serial device.
 #ifndef MOUSE_H
 #define MOUSE_H
 
@@ -47,7 +44,7 @@ private:
     double remainder_x = 0.0;
     double remainder_y = 0.0;
 
-    // Asynchronous move queue — decouples PID compute from serial write latency
+    // Move queue decouples PID compute from serial write latency
     struct Move { int dx; int dy; };
     std::queue<Move>        moveQueue;
     std::mutex              queueMtx;

@@ -1,4 +1,4 @@
-// YOLO bounding box decoding and NMS for YOLO10 and YOLO11/12 output formats.
+// YOLO bounding box decoding and NMS.
 #include <algorithm>
 #include <numeric>
 #include <iostream>
@@ -7,7 +7,6 @@
 #include "app.h"
 #include "detection/detector.h"
 
-// In-place NMS: sort by confidence, suppress overlapping boxes by IoU.
 void NMS(std::vector<Detection>& detections, float nmsThreshold)
 {
     if (detections.empty()) return;

@@ -1,6 +1,4 @@
-// DXGI Desktop Duplication capture backend.
-// Acquires frames directly from the GPU via D3D11/DXGI interop, bypassing the
-// system compositor to achieve sub-millisecond capture latency.
+// DXGI Desktop Duplication capture backend with D3D11/CUDA interop.
 #ifndef DUPLICATION_API_CAPTURE_H
 #define DUPLICATION_API_CAPTURE_H
 
@@ -16,9 +14,6 @@
 
 class DDAManager;
 
-// DuplicationAPIScreenCapture acquires a centre-cropped region of the desktop
-// at the requested resolution via DXGI Output Duplication and exposes it as
-// either a CUDA GpuMat (zero-copy D3D11 interop) or a CPU Mat (staged read).
 class DuplicationAPIScreenCapture : public IScreenCapture
 {
 public:

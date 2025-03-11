@@ -1,10 +1,8 @@
-// ai_colorbot — main entry point
-// Initialises all subsystems and spawns capture, detection, mouse, and overlay threads.
+// Main entry point. Initialises subsystems and spawns pipeline threads.
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <Windows.h>
-#pragma comment(lib, "Ws2_32.lib")
 #include <opencv2/opencv.hpp>
 #include <thread>
 #include <atomic>
@@ -23,9 +21,7 @@
 #include "util/otherTools.h"
 #include "input/makcuConnection.h"
 
-std::condition_variable frameCV;
 std::atomic<bool> shouldExit(false);
-std::atomic<bool> detectionPaused(false);
 std::mutex configMutex;
 
 Detector detector;
@@ -54,8 +50,8 @@ void initializeInputMethod()
     globalMouseThread->setMakcuConnection(makcuSerial);
 }
 
-// Listens on UDP port 5005 for remote aimbot/triggerbot enable/disable commands.
-// Message format: "true,false" (aimbot,triggerbot as booleans).
+// Listens on UDP port 5005 for remote tracking/auto-click toggle commands.
+// Message format: "true,false" (tracking,auto-click as booleans).
 void udpListenerThread()
 {
     WSADATA wsaData;
@@ -85,12 +81,12 @@ void udpListenerThread()
                 if (newA != netAimbot.load())
                 {
                     netAimbot.store(newA);
-                    std::cout << "Aimbot " << (newA ? "enabled" : "disabled") << std::endl;
+                    std::cout << "Tracking " << (newA ? "enabled" : "disabled") << std::endl;
                 }
                 if (newT != netTrigger.load())
                 {
                     netTrigger.store(newT);
-                    std::cout << "Triggerbot " << (newT ? "enabled" : "disabled") << std::endl;
+                    std::cout << "Auto-click " << (newT ? "enabled" : "disabled") << std::endl;
                 }
             }
         }
@@ -99,8 +95,8 @@ void udpListenerThread()
     WSACleanup();
 }
 
-// Consumes detection results, drives PID mouse movement, and fires the triggerbot
-// when the nearest target is within the center deadzone.
+// Consumes detection results, drives PID mouse movement, and triggers
+// auto-click when the nearest target is within the center deadzone.
 void mouseThreadFunction(MouseThread& mouseThread)
 {
     int lastDetectionVersion = -1;
@@ -259,7 +255,6 @@ int main()
         std::thread udpThread(udpListenerThread);
         udpThread.detach();
 
-        std::thread capThread(captureThread, config.detection_resolution, config.detection_resolution);
         std::thread detThread(&Detector::inferenceThread, &detector);
         std::thread mouseMovThread(mouseThreadFunction, std::ref(mouseThread));
         std::thread overlayThd(overlayThread);
@@ -267,7 +262,6 @@ int main()
         welcomeMessage();
         displayThread();
 
-        capThread.join();
         detThread.join();
         mouseMovThread.join();
         overlayThd.join();

@@ -1,4 +1,4 @@
-// TensorRT engine loading and ONNX export pipeline.
+// TensorRT engine loading and ONNX-to-engine build pipeline.
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <iostream>
@@ -22,7 +22,7 @@ void TrtLogger::log(nvinfer1::ILogger::Severity severity, const char* msg) noexc
         devMsg.find("old deserialization") != std::string::npos)
     {
         std::cout << "[TensorRT] ERROR: Engine is incompatible with this TensorRT version. "
-                     "Delete the .engine file and provide the .onnx — "
+                     "Delete the .engine file and provide the .onnx - "
                      "the engine will be rebuilt automatically.\n";
     }
     else

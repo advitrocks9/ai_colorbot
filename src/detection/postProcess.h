@@ -1,4 +1,4 @@
-// YOLO postprocessing — bounding box decoding and NMS.
+// YOLO postprocessing: bounding box decoding and NMS.
 #ifndef POSTPROCESS_H
 #define POSTPROCESS_H
 
@@ -13,7 +13,6 @@ struct Detection
     int      classId    = -1;
 };
 
-// Non-maximum suppression — modifies detections in place, removing redundant boxes.
 void NMS(std::vector<Detection>& detections, float nmsThreshold);
 
 // Decode YOLO10 output (centre-format [cx, cy, x2, y2, conf, classId] per row).

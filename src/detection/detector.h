@@ -1,7 +1,5 @@
-// Detector — TensorRT inference engine wrapper.
-// Owns the TRT runtime, engine, and execution context. Accepts GPU frames via
-// processFrame(), runs inference on a background thread, and publishes detected
-// bounding boxes through detectedBoxes / detectedClasses with a version counter.
+// TensorRT inference engine wrapper.
+// Runs inference on a background thread, publishes detections via version counter.
 #ifndef DETECTOR_H
 #define DETECTOR_H
 
@@ -29,19 +27,13 @@ public:
     Detector();
     ~Detector();
 
-    // Load and initialise the TensorRT engine from a .engine or .onnx file.
     void initialize(const std::string& modelFile);
-
-    // Queue a GPU frame for inference (called from the capture thread).
     void processFrame(const cv::cuda::GpuMat& frame);
-
-    // Background inference loop — run on its own std::thread.
     void inferenceThread();
 
     void releaseDetections();
     bool getLatestDetections(std::vector<cv::Rect>& boxes, std::vector<int>& classes);
 
-    // Shared detection output — guarded by detectionMutex.
     std::mutex detectionMutex;
     int detectionVersion = 0;
     std::condition_variable detectionCV;

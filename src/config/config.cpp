@@ -1,5 +1,4 @@
-// Configuration loading and saving — reads/writes all parameters from/to config.ini
-// using the SimpleIni header-only library.
+// Config loading/saving via SimpleIni.
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <filesystem>

@@ -1,8 +1,8 @@
-// ai_colorbot — top-level application globals
-// Defines extern declarations for shared singletons and state used across modules.
+// Top-level application globals shared across modules.
 #ifndef APP_H
 #define APP_H
 
+#include <mutex>
 #include "config/config.h"
 #include "detection/detector.h"
 #include "input/mouse.h"
@@ -11,6 +11,7 @@
 class CaptureThread;
 extern CaptureThread* globalCaptureThread;
 
+extern std::mutex configMutex;
 extern Config config;
 extern Detector detector;
 extern MouseThread* globalMouseThread;

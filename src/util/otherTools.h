@@ -1,5 +1,4 @@
-// Utility helpers: file system queries, model enumeration, monitor detection,
-// TensorRT path resolution, and misc string helpers.
+// Utility helpers: file queries, model enumeration, monitor detection.
 #ifndef OTHER_TOOLS_H
 #define OTHER_TOOLS_H
 

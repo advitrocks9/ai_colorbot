@@ -8,13 +8,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(FetchContent)
 
 FetchContent_Declare(
-    nlohmann_json
-    URL      https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
-    URL_HASH SHA256=d6c65aca6b1ed68e7a182f4757257b107ae403032760ed6ef121c9d55e81757d
-)
-FetchContent_MakeAvailable(nlohmann_json)
-
-FetchContent_Declare(
     SimpleIni
     GIT_REPOSITORY https://github.com/brofield/simpleini.git
     GIT_TAG        v4.22
@@ -27,6 +20,11 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(CUDAToolkit REQUIRED)
 find_package(TensorRT    REQUIRED)
 find_package(CUDNN       REQUIRED)
+
+# Serial (wjwwood/serial) must be built separately before configuring this project.
+# Clone https://github.com/wjwwood/serial, build it with CMake, then set either:
+#   -DSERIAL_ROOT=<install-prefix>   or   SERIAL_ROOT env var
+# Alternatively, place the built tree under third_party/serial/ (see FindSerial.cmake).
 find_package(Serial      REQUIRED)
 
 find_package(OpenCV REQUIRED COMPONENTS
@@ -62,7 +60,7 @@ set(SOURCES
     third_party/imgui/imgui_impl_opengl2.cpp
 )
 
-add_executable(ai_colorbot WIN32 ${SOURCES})
+add_executable(ai_colorbot ${SOURCES})
 
 # ── Include directories ────────────────────────────────────────────────────────
 target_include_directories(ai_colorbot PRIVATE
@@ -86,9 +84,9 @@ target_link_libraries(ai_colorbot PRIVATE
     ${Serial_LIBRARIES}
     opengl32
     Ws2_32
+    winmm
     dxgi
     d3d11
-    nlohmann_json::nlohmann_json
 )
 
 # ── Compile definitions ────────────────────────────────────────────────────────

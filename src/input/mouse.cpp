@@ -1,7 +1,5 @@
-// MouseThread — PID controller and Makcu movement dispatch.
-// The PID loop converts detection-space target coordinates to integer pixel deltas,
-// accumulates sub-pixel remainders, and queues moves to a worker thread that
-// writes them to the Makcu device over serial.
+// PID controller: converts detection-space targets to pixel deltas, accumulates
+// sub-pixel remainders, queues moves to a worker thread for serial dispatch.
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <cmath>
@@ -107,8 +105,6 @@ void MouseThread::sendMovementToDriver(int dx, int dy)
     if (makcu) makcu->move(dx, dy);
 }
 
-// Discrete PID controller: computes error from target to screen centre,
-// integrates and differentiates, then scales to physical pixel counts.
 void MouseThread::pidMove(double targetX, double targetY)
 {
     double errorX = targetX - center_x;

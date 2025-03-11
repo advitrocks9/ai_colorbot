@@ -1,9 +1,5 @@
-// MakcuConnection — connection setup, baudrate negotiation, and command protocol.
-// The Makcu device exposes a text-command API over serial:
-//   km.move(x,y)  — relative mouse movement
-//   km.left(1/0)  — press / release left button
-//   km.buttons(1) — enable async button state reporting
-//   km.version()  — version handshake (expects "MAKCU" in response)
+// Makcu serial connection: baudrate negotiation and command protocol.
+// Commands: km.move(x,y), km.left(1/0), km.buttons(1), km.version()
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <iostream>
@@ -177,8 +173,6 @@ void MakcuConnection::sendBaudSwitchCommand()
     catch (...) { std::cerr << "[Makcu] Error sending baud-switch packet.\n"; }
 }
 
-// Background thread: receives 1-byte button state reports from the device.
-// Each byte encodes button state as bitmask (bit 0 = left, 1 = right, etc.).
 void MakcuConnection::buttonListener()
 {
     flushBuffers();

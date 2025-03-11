@@ -1,4 +1,4 @@
-// Runtime configuration — all tuneable parameters loaded from config/config.ini.
+// Runtime configuration loaded from config.ini.
 #ifndef CONFIG_H
 #define CONFIG_H
 

@@ -1,5 +1,4 @@
-// DXGI Desktop Duplication capture — D3D11 device setup, frame acquisition,
-// and CUDA interop for zero-copy GPU→GPU transfer.
+// DXGI Desktop Duplication: D3D11 device setup, frame acquisition, CUDA interop.
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <iostream>
@@ -10,7 +9,6 @@
 #include "config/config.h"
 #include "util/otherTools.h"
 
-// SafeRelease helper: releases a COM interface and nulls the pointer.
 template <typename T>
 inline void SafeRelease(T** ppInterface)
 {
@@ -26,8 +24,6 @@ struct FrameContext
     ID3D11Texture2D* texture = nullptr;
 };
 
-// DDAManager wraps the D3D11 device, DXGI output, and IDXGIOutputDuplication
-// object needed to acquire desktop frames from a specific monitor.
 class DDAManager
 {
 public:
@@ -219,7 +215,6 @@ cv::cuda::GpuMat DuplicationAPIScreenCapture::GetNextFrameGpu()
     HRESULT hr = m_ddaManager->AcquireFrame(ctx, 100);
     if (FAILED(hr)) return cv::cuda::GpuMat();
 
-    // Copy the centre-crop region into the shared D3D11 texture
     D3D11_BOX box{
         static_cast<UINT>((screenWidth  - regionWidth)  / 2),
         static_cast<UINT>((screenHeight - regionHeight) / 2),
@@ -232,7 +227,7 @@ cv::cuda::GpuMat DuplicationAPIScreenCapture::GetNextFrameGpu()
     m_ddaManager->ReleaseFrame();
     ctx.texture->Release();
 
-    // Zero-copy: map the D3D11 texture as a CUDA array and memcpy on GPU
+    // Zero-copy D3D11->CUDA via mapped array
     cv::cuda::GpuMat gpu(regionHeight, regionWidth, CV_8UC4);
     cudaGraphicsMapResources(1, &cudaResource, cudaStream);
     cudaArray_t arr;

@@ -1,4 +1,4 @@
-// displayThread — OpenCV debug window showing live detections and FPS.
+// OpenCV debug window showing live detections and FPS.
 #ifndef VISUALS_H
 #define VISUALS_H
 
